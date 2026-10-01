@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    DieAuth — the client-side identity patch payload for Dead Island: Epidemic (Reanimated).
+
+    Loaded INSIDE the Crib client (Unity 4.x / Mono 2.x, hence net35). It has exactly one job: when the
+    game builds its login request, hand it a Steam SESSION ticket (GetAuthSessionTicket) instead of the
+    encrypted app ticket the retail backend used to decrypt. The server validates the session ticket with
+    Valve. Nothing here talks to the network, holds a secret, or touches anything but Steam's ticket API.
+
+    Zero game references: every game type is reached by reflection, so this builds in public CI from a
+    clean checkout. See README.md ("What the client patch does").
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>DieAuth</AssemblyName>
+    <RootNamespace>DieAuth</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Optimize>true</Optimize>
+    <Deterministic>true</Deterministic>
+    <!-- net35 is the only target the Crib's Mono 2.x can load; the EOL warning is expected. -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <AssemblyTitle>Dead Island Epidemic: Reanimated — client identity patch</AssemblyTitle>
+  </PropertyGroup>
+
+</Project>

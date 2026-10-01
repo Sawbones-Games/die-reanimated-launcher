@@ -1,0 +1,190 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DieReanimated.Launcher.Ui.ViewModels"
+        xmlns:v="using:DieReanimated.Launcher.Ui.Views"
+        x:Class="DieReanimated.Launcher.Ui.MainWindow"
+        x:DataType="vm:LauncherViewModel"
+        Title="Dead Island Epidemic · Reanimated"
+        Icon="avares://DIE-Reanimated-Launcher/Assets/launcher.ico"
+        Width="1000" Height="640" CanResize="False"
+        SystemDecorations="None" WindowStartupLocation="CenterScreen"
+        Background="{StaticResource B.Bg}" Foreground="{StaticResource B.Bone}"
+        FontFamily="{StaticResource FontBody}">
+
+  <!--
+    One window, four screens. The header, the PLAY block and the status bar are the same on every screen;
+    only the middle changes. See docs/reference/screens.md.
+  -->
+
+  <Border BorderBrush="{StaticResource B.Line1}" BorderThickness="1">
+    <Panel>
+
+      <!-- ── backdrop: key art when available (Phase 4), the palette until then ─────────────────── -->
+      <Border Name="Backdrop">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0" Color="#0f2b27"/>
+            <GradientStop Offset="0.55" Color="#091918"/>
+            <GradientStop Offset="1" Color="#030909"/>
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+      <!-- the art sits to the right, under the darkening reads; the headline owns the left -->
+      <v:FocusImage Source="{Binding Backdrop}" FocalPoint="{x:Static v:FocusImage.Right}" IsVisible="{Binding HasBackdrop}" Opacity="0.85" Margin="120,0,-120,0"/>
+      <!-- the reads: left-to-right and bottom-up darkening, so text always sits on ink -->
+      <Border IsHitTestVisible="False">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+            <GradientStop Offset="0" Color="#EB030B0A"/>
+            <GradientStop Offset="0.45" Color="#8C030B0A"/>
+            <GradientStop Offset="1" Color="#40030B0A"/>
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+      <Border IsHitTestVisible="False">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
+            <GradientStop Offset="0" Color="#FA020808"/>
+            <GradientStop Offset="0.32" Color="#BF020808"/>
+            <GradientStop Offset="0.7" Color="#00020808"/>
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+      <Border IsHitTestVisible="False" Background="#59030B0A" IsVisible="{Binding !IsHome}"/>
+
+      <DockPanel>
+
+        <!-- ── header ─────────────────────────────────────────────────────────────────────────────── -->
+        <Grid DockPanel.Dock="Top" Margin="28,16,28,0" ColumnDefinitions="Auto,24,Auto,*,Auto" Name="Header"
+              Background="Transparent" PointerPressed="OnHeaderPressed">
+
+          <!-- wordmark: the website's brand block -->
+          <StackPanel VerticalAlignment="Bottom">
+            <TextBlock FontFamily="{StaticResource FontDisplay}" FontWeight="Bold" FontSize="34" LetterSpacing="1.3" LineHeight="32" HorizontalAlignment="Center">
+              <Run Text="DEAD ISLAND&#160;" Foreground="{StaticResource B.Bone2}"/><Run Text="EPIDEMIC" Foreground="{StaticResource B.Red}"/>
+            </TextBlock>
+            <Grid ColumnDefinitions="*,Auto,*" Margin="0,1,0,0">
+              <Border Height="1" Background="{StaticResource B.Line3}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+              <TextBlock Grid.Column="1" Text="REANIMATED" FontFamily="{StaticResource FontDisplay}" FontWeight="Bold" FontSize="22" LetterSpacing="2.2" Foreground="{StaticResource B.Teal}"/>
+              <Border Grid.Column="2" Height="1" Background="{StaticResource B.Line3}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </Grid>
+            <TextBlock Text="LAUNCHER · COMMUNITY PRIVATE SERVER" Classes="fine dim" FontWeight="Bold" FontSize="9" LetterSpacing="2" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+          </StackPanel>
+
+          <!-- tabs -->
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="14" VerticalAlignment="Bottom" Margin="0,0,0,12">
+            <Button Classes="tab" Classes.on="{Binding IsHome}" Click="OnTabHome"><TextBlock Text="HOME"/></Button>
+            <Button Classes="tab" Classes.on="{Binding IsNews}" Click="OnTabNews">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="NEWS"/>
+                <Border IsVisible="{Binding HasNews}" BorderBrush="{StaticResource B.RedDeep}" BorderThickness="1" Background="{StaticResource B.RedWash}" Padding="6,0" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding News.Count}" FontFamily="{StaticResource FontLabel}" FontSize="9" FontWeight="Bold" LetterSpacing="0" Foreground="{StaticResource B.Red}"/>
+                </Border>
+              </StackPanel>
+            </Button>
+            <Button Classes="tab" Classes.on="{Binding IsServers}" Click="OnTabServers"><TextBlock Text="SERVERS"/></Button>
+            <Button Classes="tab" Classes.on="{Binding IsSettings}" Click="OnTabSettings"><TextBlock Text="SETTINGS"/></Button>
+          </StackPanel>
+
+          <!-- server + identity, on the tabs' line -->
+          <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="12" VerticalAlignment="Bottom" Margin="0,0,0,6">
+            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <Border Classes="dot" Classes.off="{Binding !ServerReachable}"/>
+              <TextBlock Text="{Binding OnlineText}" Classes="kicker" FontSize="12" LetterSpacing="1.2" VerticalAlignment="Center"
+                         Foreground="{Binding ServerReachable, Converter={x:Static v:Conv.GreenOrOff}}"/>
+            </StackPanel>
+            <Border Background="{StaticResource B.Chip}" BorderBrush="{StaticResource B.Line2}" BorderThickness="1" Padding="5,5,12,5" VerticalAlignment="Center">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <Border Classes="thumb" Width="28" Height="28">
+                  <Image Source="{Binding Avatar}" Stretch="UniformToFill"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="{Binding Persona}" FontSize="13" FontWeight="SemiBold" LineHeight="14" MaxWidth="150" TextTrimming="CharacterEllipsis"/>
+                  <TextBlock Text="{Binding SteamLine}" Classes="fine" FontSize="9" LetterSpacing="0.9"
+                             Foreground="{Binding SteamRunning, Converter={x:Static v:Conv.MutedOrAmber}}"/>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </Grid>
+
+        <!-- ── status bar ─────────────────────────────────────────────────────────────────────────── -->
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource B.Bar}" BorderBrush="{StaticResource B.Line1}" BorderThickness="0,1,0,0" Padding="28,5">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <StackPanel Orientation="Horizontal" Spacing="16">
+              <TextBlock Text="{Binding FooterLeft}" Classes="fine"/>
+              <TextBlock Text="{Binding VersionText}" Classes="fine"/>
+            </StackPanel>
+            <TextBlock Grid.Column="1" Classes="fine dim" FontSize="9" LetterSpacing="0.5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24,0" TextTrimming="CharacterEllipsis" IsVisible="{Binding IsHome}"
+                       Text="Unofficial fan-made revival · not affiliated with, endorsed by, or associated with Deep Silver, Stunlock Studios, or any original rights holder"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16">
+              <Button Classes="link fine" Padding="0" Click="OnDiscord" IsVisible="{Binding HasDiscord}"><TextBlock Text="DISCORD"/></Button>
+              <Button Classes="link fine" Padding="0" Click="OnSource"><TextBlock Text="LAUNCHER GITHUB"/></Button>
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <!-- ── the PLAY block, same on every screen ───────────────────────────────────────────────── -->
+        <Grid DockPanel.Dock="Bottom" Margin="28,8,28,16" ColumnDefinitions="*,Auto">
+
+          <!-- bottom-left: Home's tiles, or the screen's hint -->
+          <Panel VerticalAlignment="Bottom">
+            <TextBlock Text="{Binding Hint}" Classes="fine dim" LetterSpacing="1" Margin="0,0,0,6" IsVisible="{Binding !IsHome}"/>
+            <v:HomeTiles IsVisible="{Binding IsHome}"/>
+          </Panel>
+
+          <StackPanel Grid.Column="1" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <!-- the three ticks -->
+            <StackPanel Orientation="Horizontal" Spacing="14" HorizontalAlignment="Right">
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <Border Classes="dot" Classes.off="{Binding !PatchOk}" Classes.idle="{Binding Busy}"/><TextBlock Text="{Binding PatchTick}" Classes="tick"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <Border Classes="dot" Classes.warn="{Binding !UpdateOk}" Classes.idle="{Binding Busy}"/><TextBlock Text="{Binding UpdateTick}" Classes="tick"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <Border Classes="dot" Classes.off="{Binding !ServerOk}" Classes.idle="{Binding Busy}"/><TextBlock Text="{Binding ServerTick}" Classes="tick"/>
+              </StackPanel>
+            </StackPanel>
+
+            <!-- the primary button; while a download runs it fills up from the left (no extra row, nothing moves) -->
+            <Button Classes="play" Name="Primary" AutomationProperties.Name="Primary" IsEnabled="{Binding PrimaryEnabled}" Click="OnPrimary" HorizontalAlignment="Right"
+                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+              <Panel>
+                <Border Background="{StaticResource B.RedDeep}" HorizontalAlignment="Left" IsVisible="{Binding HasProgress}"
+                        Width="{Binding Progress, Converter={x:Static v:Conv.Fraction}, ConverterParameter=258}"/>
+                <TextBlock Text="{Binding PrimaryText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Panel>
+            </Button>
+
+            <TextBlock Text="{Binding Detail}" Classes="fine" LetterSpacing="1" HorizontalAlignment="Right" TextAlignment="Right" MaxWidth="360" TextWrapping="Wrap"
+                       Foreground="{Binding DetailIsError, Converter={x:Static v:Conv.RedOrMuted}}"/>
+
+            <ItemsControl ItemsSource="{Binding PatchWrites}" IsVisible="{Binding ShowPatchWrites}" HorizontalAlignment="Right">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <TextBlock Text="{Binding}" Classes="mono" FontSize="10" HorizontalAlignment="Right"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Grid>
+
+        <!-- ── the screen ─────────────────────────────────────────────────────────────────────────── -->
+        <Panel Margin="28,14,28,0">
+          <v:HomeView IsVisible="{Binding IsHome}"/>
+          <v:NewsView IsVisible="{Binding IsNews}"/>
+          <v:ServersView IsVisible="{Binding IsServers}"/>
+          <v:SettingsView IsVisible="{Binding IsSettings}"/>
+        </Panel>
+
+      </DockPanel>
+
+      <!-- window controls sit in the corner, above the header row -->
+      <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,8,0">
+        <Button Classes="win" Click="OnMinimize"><TextBlock Text="—" FontSize="12"/></Button>
+        <Button Classes="win close" Click="OnClose"><TextBlock Text="✕" FontSize="12"/></Button>
+      </StackPanel>
+    </Panel>
+  </Border>
+</Window>

@@ -1,0 +1,110 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DieReanimated.Launcher.Ui.ViewModels"
+             xmlns:v="using:DieReanimated.Launcher.Ui.Views"
+             x:Class="DieReanimated.Launcher.Ui.Views.ServersView"
+             x:DataType="vm:LauncherViewModel">
+  <!-- Servers: three cards, match hosts by region, the live matches strip. Read-only; nothing is joinable. -->
+  <DockPanel>
+
+    <!-- cards -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,10,*,10,*" Margin="0,0,0,12">
+      <Border Classes="card">
+        <StackPanel Spacing="4">
+          <TextBlock Text="CRIB" Classes="label"/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Border Classes="dot" Classes.off="{Binding !CribUp}"/>
+            <TextBlock Text="{Binding CribStateText}" Classes="kicker" FontSize="13" LetterSpacing="1.3"
+                       Foreground="{Binding CribUp, Converter={x:Static v:Conv.GreenOrOff}}"/>
+          </StackPanel>
+          <TextBlock Text="{Binding CribDetail}" Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}"/>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="2" Classes="card">
+        <StackPanel Spacing="4">
+          <TextBlock Text="MATCHMAKING" Classes="label"/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Border Classes="dot" Classes.off="{Binding !MmUp}"/>
+            <TextBlock Text="{Binding MmUp, Converter={x:Static v:Conv.OnlineText}}" Classes="kicker" FontSize="13" LetterSpacing="1.3"
+                       Foreground="{Binding MmUp, Converter={x:Static v:Conv.GreenOrOff}}"/>
+          </StackPanel>
+          <TextBlock Text="{Binding MmDetail}" Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}"/>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="4" Classes="card">
+        <StackPanel Spacing="2">
+          <TextBlock Text="IN PLAY" Classes="label" Margin="0,0,0,2"/>
+          <TextBlock Text="{Binding InPlayText}" Classes="big" FontSize="20" LineHeight="22"/>
+          <TextBlock Text="{Binding InPlayDetail}" Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}"/>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- match hosts -->
+    <Border DockPanel.Dock="Top" Classes="panel" Margin="0,0,0,12">
+      <StackPanel>
+        <v:SectionTitle Text="MATCH HOSTS" Margin="12,8,12,0"/>
+        <Grid ColumnDefinitions="2*,*,*,*" Background="#47000000">
+          <Grid.Styles>
+            <Style Selector="TextBlock"><Setter Property="Margin" Value="12,7"/></Style>
+          </Grid.Styles>
+          <TextBlock Text="REGION" Classes="label"/>
+          <TextBlock Grid.Column="1" Text="MATCHES" Classes="label"/>
+          <TextBlock Grid.Column="2" Text="PLAYERS" Classes="label"/>
+          <TextBlock Grid.Column="3" Text="STATUS" Classes="label"/>
+        </Grid>
+        <Border Height="1" Background="{StaticResource B.Line2}"/>
+        <ItemsControl ItemsSource="{Binding Regions}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:LauncherViewModel+RegionVm">
+              <Grid ColumnDefinitions="2*,*,*,*" Height="34">
+                <TextBlock Text="{Binding Name}" Margin="12,0" VerticalAlignment="Center" FontFamily="{StaticResource FontLabel}" FontWeight="Bold" FontSize="13" LetterSpacing="1" Foreground="{StaticResource B.Red}"/>
+                <TextBlock Grid.Column="1" Text="{Binding MatchesText}" Margin="12,0" VerticalAlignment="Center" FontSize="13"/>
+                <TextBlock Grid.Column="2" Text="{Binding PlayersText}" Margin="12,0" VerticalAlignment="Center" FontSize="13"/>
+                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" Margin="12,0" VerticalAlignment="Center">
+                  <Border Classes="dot" Width="6" Height="6" CornerRadius="3" Classes.off="{Binding !Online}"/>
+                  <TextBlock Text="{Binding StatusText}" Classes="kicker" FontSize="11" LetterSpacing="1.1" VerticalAlignment="Center"
+                             Foreground="{Binding Online, Converter={x:Static v:Conv.GreenOrOff}}"/>
+                </StackPanel>
+                <Border Grid.ColumnSpan="4" Height="1" Background="{StaticResource B.Line1}" VerticalAlignment="Bottom"/>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Text="No match hosts are registered." Classes="kv" Margin="12,8" IsVisible="{Binding !HasRegions}"/>
+      </StackPanel>
+    </Border>
+
+    <!-- live matches -->
+    <Border Classes="panel">
+      <DockPanel>
+        <v:SectionTitle DockPanel.Dock="Top" Text="LIVE MATCHES" Margin="12,8,12,0"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Padding="12,0,12,10">
+          <Panel>
+            <ItemsControl ItemsSource="{Binding Live}" IsVisible="{Binding HasLive}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="10"/></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LauncherViewModel+LiveVm">
+                  <Border BorderBrush="{StaticResource B.Line2}" BorderThickness="1" Background="#80020808" Padding="6" MinWidth="260">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                      <Border Classes="thumb" Width="78" Height="44" ClipToBounds="True">
+                        <v:FocusImage Source="{Binding Art}"/>
+                      </Border>
+                      <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Mode}" Classes="h3"/>
+                        <TextBlock Text="{Binding Detail}" Classes="fine" LetterSpacing="0.9"/>
+                      </StackPanel>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{Binding NoLiveText}" Classes="kv" IsVisible="{Binding !HasLive}" VerticalAlignment="Center"/>
+          </Panel>
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+  </DockPanel>
+</UserControl>

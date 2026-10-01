@@ -1,0 +1,92 @@
+# Builds a release from a pushed tag and attaches the binaries, SHA256SUMS and a build-provenance
+# attestation. This workflow is the ONLY thing that produces a player-facing binary; the server never does.
+#
+# Tags are protected (repository admins only, by ruleset) — pushing one IS shipping.
+#
+# Every action is pinned to a commit SHA (the tag it corresponds to is in the comment). Bump by editing the
+# SHA, never by widening to a floating tag: the whole point of this file is that a release is reproducible
+# from the repository alone.
+
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write        # upload release assets
+  id-token: write        # sign the attestation
+  attestations: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
+
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68   # v6.0.0
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Version from tag
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Test
+        run: dotnet test tests/Launcher.Tests -c Release -p:Version=${{ env.VERSION }} -p:ReleaseRepository=${{ github.repository }}
+
+      - name: Build patch payload (net35, no game references)
+        run: dotnet build patches/DieAuth/DieAuth.csproj -c Release -p:Version=${{ env.VERSION }}
+
+      # The gamepad half of the client patch. It needs UnityEngine types, so it compiles against
+      # patches/UnityEngine.Stub — a facade of our own carrying the assembly identity the runtime binds to, referenced
+      # compile-only. Nothing of Unity's is in the repository and no game install is needed.
+      - name: Build gamepad payload (net35, against the UnityEngine stub)
+        run: dotnet build patches/DieGamepad/DieGamepad.csproj -c Release -p:Version=${{ env.VERSION }}
+
+      - name: Build launcher (self-contained, single file)
+        run: >
+          dotnet publish src/Launcher/Launcher.csproj -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true -p:Version=${{ env.VERSION }} -p:ReleaseRepository=${{ github.repository }} -o artifacts/launcher
+        # ReleaseRepository: the build pulls its updates from the repository that built it (dev builds from the
+        # private dev repository, public builds from the public one). See Defaults.ReleaseRepository.
+
+      # Players get the zip: inside it the exe carries the game's own launcher name, so it is dragged straight over
+      # the retail file (GitHub rewrites spaces in asset names to dots, hence the zip). The bare exe is what an
+      # installed launcher downloads to update itself — the name does not matter to it.
+      - name: Collect
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist, stage | Out-Null
+          Copy-Item artifacts/launcher/DIE-Reanimated-Launcher.exe "stage/Dead Island Epidemic - Launcher.exe"
+          Compress-Archive -Path "stage/Dead Island Epidemic - Launcher.exe" -DestinationPath dist/DIE-Reanimated-Launcher.zip -CompressionLevel Optimal
+          Copy-Item artifacts/launcher/DIE-Reanimated-Launcher.exe dist/DIE-Reanimated-Launcher.exe
+          Copy-Item patches/DieAuth/bin/Release/net35/DieAuth.dll dist/DieAuth.dll
+          Copy-Item patches/DieGamepad/bin/Release/net35/DieGamepad.dll dist/DieGamepad.dll
+          Set-Location dist
+          $lines = foreach ($f in "DIE-Reanimated-Launcher.exe", "DieAuth.dll", "DieGamepad.dll", "DIE-Reanimated-Launcher.zip") { (Get-FileHash $f -Algorithm SHA256).Hash.ToLower() + "  " + $f }
+          [IO.File]::WriteAllText("$PWD/SHA256SUMS", ($lines -join "`n") + "`n")
+          Get-Content SHA256SUMS
+
+      # Attestations exist only for public repositories: the dev channel (private) skips this and ships the
+      # digests alone; the public channel carries the full provenance chain.
+      - name: Attest build provenance
+        if: ${{ !github.event.repository.private }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8   # v4.2.2
+        with:
+          subject-path: |
+            dist/DIE-Reanimated-Launcher.exe
+            dist/DieAuth.dll
+            dist/DieGamepad.dll
+
+      - name: Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64   # v3.0.3
+        with:
+          files: |
+            dist/DIE-Reanimated-Launcher.zip
+            dist/DIE-Reanimated-Launcher.exe
+            dist/DieAuth.dll
+            dist/DieGamepad.dll
+            dist/SHA256SUMS
+          generate_release_notes: true
+          prerelease: ${{ github.event.repository.private }}

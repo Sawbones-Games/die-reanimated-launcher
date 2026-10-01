@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DieReanimated.Launcher.Ui.ViewModels"
+             xmlns:v="using:DieReanimated.Launcher.Ui.Views"
+             x:Class="DieReanimated.Launcher.Ui.Views.HomeView"
+             x:DataType="vm:LauncherViewModel">
+  <!-- Home: one headline over the art. The tiles and PLAY live in the window's bottom row. -->
+  <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" MaxWidth="560" Margin="0,0,0,4">
+
+    <!-- the newest item -->
+    <StackPanel IsVisible="{Binding HasHeadline}">
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+        <Border Width="3" Height="16" Background="{StaticResource B.Red}"/>
+        <TextBlock Text="{Binding Headline.ReaderKicker, FallbackValue=''}" Classes="kicker" VerticalAlignment="Center"
+                   Foreground="{Binding Headline.Kind, Converter={x:Static v:Conv.KindBrush}}"/>
+      </StackPanel>
+      <TextBlock Text="{Binding Headline.Title, FallbackValue=''}" Classes="h1"/>
+      <TextBlock Text="{Binding Headline.Summary, FallbackValue=''}" Classes="body" MaxWidth="440" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,14,0,0">
+        <Button Classes="ghost" Click="OnReadNotes"><TextBlock Text="READ THE NOTES"/></Button>
+        <Button Classes="ghost" Click="OnDiscord" IsVisible="{Binding HasDiscord}"><TextBlock Text="{Binding DiscordButton}"/></Button>
+      </StackPanel>
+    </StackPanel>
+
+    <!-- nothing published yet -->
+    <StackPanel IsVisible="{Binding !HasHeadline}">
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+        <Border Width="3" Height="16" Background="{StaticResource B.Red}"/>
+        <TextBlock Text="COMMUNITY PRIVATE SERVER" Classes="kicker red" VerticalAlignment="Center"/>
+      </StackPanel>
+      <TextBlock Text="{Binding ServerName}" Classes="h1"/>
+      <TextBlock Text="Dead Island: Epidemic, back on the island. Press Play — the game signs you in with your Steam account, the same as it always did." Classes="body" MaxWidth="440" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,14,0,0" IsVisible="{Binding HasDiscord}">
+        <Button Classes="ghost" Click="OnDiscord"><TextBlock Text="{Binding DiscordButton}"/></Button>
+      </StackPanel>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

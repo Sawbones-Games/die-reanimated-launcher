@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Launcher.Patching — rewrites the clients' on-disk Assembly-CSharp.dll: the Crib's login-ticket getter
+    calls the DieAuth payload, and both clients' start-up calls DieGamepad. Runs in the launcher (never inside the game); Mono.Cecil reads and writes the
+    assembly without loading it. Idempotent, keeps a pristine .bak, refuses to touch a locked file.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DieReanimated.Launcher.Patching</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mono.Cecil" Version="0.11.5" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    DieGamepad — controller support for Dead Island: Epidemic (Reanimated).
+
+    Loaded INSIDE both clients (Unity 4.x / Mono 2.x, hence net35) by the client patch, which inserts a
+    call to DieGamepad.Bootstrap.Init() at the top of UnityClient.Awake (match) and CribStart.Awake (Crib).
+
+    What it does: reads an XInput pad, and drives the game through the paths a mouse and keyboard already
+    use — the player's own bindings via cInput, and the real cursor. Nothing about the network changes; a
+    pad player is byte-identical to a mouse player on the wire. The pad's ten real buttons are bound into
+    the game's own keybinding system while it drives, so the game prints "(A)" in its own prompts.
+
+    It references UnityEngine, which CI has no copy of and which cannot be redistributed here, so it
+    compiles against ../UnityEngine.Stub — a facade of our own with the retail assembly's identity. The
+    reference is Private=false: the stub is a compile-time shim and is never shipped or loaded. Every game
+    type (GameManager, UnityClient, cInput, the HUD bindings) is reached by reflection, exactly as DieAuth
+    does, so nothing of the game is needed to build this from a clean checkout.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>DieGamepad</AssemblyName>
+    <RootNamespace>DieGamepad</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Optimize>true</Optimize>
+    <Deterministic>true</Deterministic>
+    <!-- net35 is the only target the clients' Mono 2.x can load; the EOL warning is expected. -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <AssemblyTitle>Dead Island Epidemic: Reanimated — gamepad support</AssemblyTitle>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Compile-time only. ReferenceOutputAssembly gives us the types; Private=false keeps the stub out of
+         every output folder, so it can never be mistaken for the real UnityEngine at run time. -->
+    <ProjectReference Include="..\UnityEngine.Stub\UnityEngine.Stub.csproj">
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

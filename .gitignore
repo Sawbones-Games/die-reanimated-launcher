@@ -1,0 +1,16 @@
+# build output
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+.vs/
+.idea/
+
+# local machine paths
+Directory.Build.local.props
+
+# never: game files, tickets, logs
+*.bak
+*.bin
+*.log

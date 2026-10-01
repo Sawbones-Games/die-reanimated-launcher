@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Launcher.Core — everything the launcher does that is not a window: find the install, fetch and cache the
+    server manifest, keep ip.cfg correct, decide the current state (patch / update / play), launch the game the
+    way the retail launcher did, and update itself. The CLI and the desktop UI are both thin shells over this.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DieReanimated.Launcher</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- The repository a build updates from. CI passes the repository that is building (-p:ReleaseRepository=owner/name);
+         a build from the private dev repository therefore pulls dev releases, one from the public repository public
+         ones, and neither can be pointed elsewhere at run time. See Defaults.ReleaseRepository. -->
+    <ReleaseRepository Condition="'$(ReleaseRepository)' == ''">Sawbones-Games/die-reanimated-launcher</ReleaseRepository>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Launcher.Tests" />
+    <AssemblyMetadata Include="ReleaseRepository" Value="$(ReleaseRepository)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Launcher.Patching\Launcher.Patching.csproj" />
+    <!-- Build DieAuth first (no assembly reference: it targets net35 and runs inside the game)… -->
+    <ProjectReference Include="..\..\patches\DieAuth\DieAuth.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" SetTargetFramework="TargetFramework=net35" />
+    <!-- …and the gamepad payload, the same way: net35, runs inside the game, embedded not referenced. -->
+    <ProjectReference Include="..\..\patches\DieGamepad\DieGamepad.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" SetTargetFramework="TargetFramework=net35" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- …and carry it inside the launcher, so PATCH needs no network: the payload of this release is always at hand.
+         A manifest naming a different patch version is fetched from that release instead (LauncherSession). -->
+    <EmbeddedResource Include="..\..\patches\DieAuth\bin\$(Configuration)\net35\DieAuth.dll" Link="DieAuth.dll" LogicalName="DieAuth.dll" />
+    <EmbeddedResource Include="..\..\patches\DieGamepad\bin\$(Configuration)\net35\DieGamepad.dll" Link="DieGamepad.dll" LogicalName="DieGamepad.dll" />
+  </ItemGroup>
+
+</Project>

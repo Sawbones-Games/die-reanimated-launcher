@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DieReanimated.Launcher.Ui.ViewModels"
+             xmlns:v="using:DieReanimated.Launcher.Ui.Views"
+             x:Class="DieReanimated.Launcher.Ui.Views.NewsView"
+             x:DataType="vm:LauncherViewModel">
+  <!-- News: one plain list and a native reader. No filters, no browser. -->
+  <Panel>
+
+    <Grid ColumnDefinitions="300,14,*" IsVisible="{Binding HasNews}">
+
+      <!-- list -->
+      <Border Classes="panel">
+        <ScrollViewer>
+          <ItemsControl ItemsSource="{Binding News}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:LauncherViewModel+NewsVm">
+                <Button Classes="row" Classes.on="{Binding IsSelected}" Click="OnPick">
+                  <Grid ColumnDefinitions="64,10,*">
+                    <Border Classes="thumb" Width="64" Height="40" VerticalAlignment="Top" ClipToBounds="True">
+                      <v:FocusImage Source="{Binding Image}" FocalPoint="{Binding Focus}"/>
+                    </Border>
+                    <StackPanel Grid.Column="2" Spacing="2">
+                      <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="{Binding Kind}" Classes="label" LetterSpacing="1.3" Foreground="{Binding Kind, Converter={x:Static v:Conv.KindBrush}}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding DateShort}" Classes="label" LetterSpacing="1.3" Foreground="{StaticResource B.Muted}"/>
+                      </Grid>
+                      <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" LineHeight="15" TextWrapping="Wrap" Foreground="{StaticResource B.Bone}"/>
+                    </StackPanel>
+                  </Grid>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+
+      <!-- reader -->
+      <Border Grid.Column="2" Classes="panel" IsVisible="{Binding HasSelectedNews}">
+        <DockPanel>
+          <!-- hero -->
+          <Border DockPanel.Dock="Top" Height="116" BorderBrush="#A69a1400" BorderThickness="0,0,0,2" ClipToBounds="True">
+            <Panel>
+              <Border Classes="thumb" BorderThickness="0"/>
+              <v:FocusImage Source="{Binding SelectedNews.Image, FallbackValue={x:Null}}" FocalPoint="{Binding SelectedNews.Focus, FallbackValue={x:Static v:FocusImage.Centre}}"/>
+              <Border>
+                <Border.Background>
+                  <LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
+                    <GradientStop Offset="0" Color="#F7020808"/>
+                    <GradientStop Offset="0.6" Color="#4D020808"/>
+                    <GradientStop Offset="1" Color="#00020808"/>
+                  </LinearGradientBrush>
+                </Border.Background>
+              </Border>
+              <StackPanel VerticalAlignment="Bottom" Margin="20,0,20,12" Spacing="4">
+                <TextBlock Text="{Binding SelectedNews.ReaderKicker, FallbackValue=''}" Classes="kicker"
+                           Foreground="{Binding SelectedNews.Kind, Converter={x:Static v:Conv.KindBrush}, FallbackValue={x:Null}}"/>
+                <TextBlock Text="{Binding SelectedNews.Title, FallbackValue=''}" Classes="h2"/>
+              </StackPanel>
+            </Panel>
+          </Border>
+          <!-- footer -->
+          <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource B.Line1}" BorderThickness="0,1,0,0" Background="#4D000000" Padding="20,6">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Text="{Binding SelectedNews.DateLong, FallbackValue=''}" Classes="fine dim" FontSize="9" LetterSpacing="0.9" VerticalAlignment="Center"/>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14">
+                <Button Classes="link fine" Padding="0" IsEnabled="{Binding CanNewer}" Click="OnNewer"><TextBlock Text="← NEWER"/></Button>
+                <Button Classes="link fine" Padding="0" IsEnabled="{Binding CanOlder}" Click="OnOlder"><TextBlock Text="OLDER →"/></Button>
+              </StackPanel>
+            </Grid>
+          </Border>
+          <!-- body -->
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <!-- the viewport width is bound explicitly: a panel inside a ScrollViewer otherwise measures its text unbounded -->
+            <Border Padding="20,14,20,10" Width="{Binding $parent[ScrollViewer].Viewport.Width}">
+              <v:MarkdownView Blocks="{Binding SelectedNews.Body, FallbackValue={x:Null}}"/>
+            </Border>
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+    </Grid>
+
+    <!-- nothing published -->
+    <Border Classes="panel" IsVisible="{Binding !HasNews}" Padding="24">
+      <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="6">
+        <TextBlock Text="NO NEWS YET" Classes="kicker" HorizontalAlignment="Center"/>
+        <TextBlock Text="Patch notes and events will appear here as they are published." Classes="body" HorizontalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+  </Panel>
+</UserControl>

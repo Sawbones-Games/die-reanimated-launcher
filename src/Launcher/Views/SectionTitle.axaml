@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:v="using:DieReanimated.Launcher.Ui.Views"
+             x:Class="DieReanimated.Launcher.Ui.Views.SectionTitle"
+             x:DataType="v:SectionTitle">
+  <!-- the website's section heading: red bar · label · line fading right -->
+  <Grid ColumnDefinitions="Auto,Auto,*" Margin="0,0,0,10">
+    <Border Width="3" Height="15" Background="{StaticResource B.RedDeep}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+    <TextBlock Grid.Column="1" Text="{Binding Text, RelativeSource={RelativeSource AncestorType=v:SectionTitle}}"
+               Classes="kicker bone" FontSize="12" LetterSpacing="2.1" VerticalAlignment="Center"/>
+    <Border Grid.Column="2" Height="1" Margin="12,0,0,0" VerticalAlignment="Center" Background="{StaticResource B.HeaderLine}"/>
+  </Grid>
+</UserControl>

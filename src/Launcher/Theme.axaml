@@ -1,0 +1,429 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!--
+    The launcher's visual grammar, lifted from the project website: a deep teal-black ground, thin teal panel
+    lines, a blood-red accent for the one thing that matters on a screen, bone-white text. Three families:
+    Oswald (display), Barlow Semi Condensed (labels), Source Sans 3 (body).
+  -->
+
+  <Styles.Resources>
+    <ResourceDictionary>
+      <!-- palette -->
+      <Color x:Key="C.Bg">#091918</Color>
+      <Color x:Key="C.Deep">#030909</Color>
+      <Color x:Key="C.Ink">#020808</Color>
+      <Color x:Key="C.Line1">#1b3730</Color>
+      <Color x:Key="C.Line2">#294e44</Color>
+      <Color x:Key="C.Line3">#3a7868</Color>
+      <Color x:Key="C.RedDeep">#9a1400</Color>
+      <Color x:Key="C.Red">#c41800</Color>
+      <Color x:Key="C.Teal">#4e9882</Color>
+      <Color x:Key="C.Bone">#e0ddd0</Color>
+      <Color x:Key="C.BoneBright">#f2efe4</Color>
+      <Color x:Key="C.Bone2">#aca89c</Color>
+      <Color x:Key="C.Body">#d2cfc3</Color>
+      <Color x:Key="C.Muted">#8a9a93</Color>
+      <Color x:Key="C.Muted2">#6e817a</Color>
+      <Color x:Key="C.Green">#54a438</Color>
+      <Color x:Key="C.Off">#be2020</Color>
+      <Color x:Key="C.Amber">#c47e00</Color>
+
+      <SolidColorBrush x:Key="B.Bg" Color="{StaticResource C.Bg}"/>
+      <SolidColorBrush x:Key="B.Deep" Color="{StaticResource C.Deep}"/>
+      <SolidColorBrush x:Key="B.Ink" Color="{StaticResource C.Ink}"/>
+      <SolidColorBrush x:Key="B.Line1" Color="{StaticResource C.Line1}"/>
+      <SolidColorBrush x:Key="B.Line2" Color="{StaticResource C.Line2}"/>
+      <SolidColorBrush x:Key="B.Line3" Color="{StaticResource C.Line3}"/>
+      <SolidColorBrush x:Key="B.RedDeep" Color="{StaticResource C.RedDeep}"/>
+      <SolidColorBrush x:Key="B.Red" Color="{StaticResource C.Red}"/>
+      <SolidColorBrush x:Key="B.Teal" Color="{StaticResource C.Teal}"/>
+      <SolidColorBrush x:Key="B.Bone" Color="{StaticResource C.Bone}"/>
+      <SolidColorBrush x:Key="B.BoneBright" Color="{StaticResource C.BoneBright}"/>
+      <SolidColorBrush x:Key="B.Bone2" Color="{StaticResource C.Bone2}"/>
+      <SolidColorBrush x:Key="B.Body" Color="{StaticResource C.Body}"/>
+      <SolidColorBrush x:Key="B.Muted" Color="{StaticResource C.Muted}"/>
+      <SolidColorBrush x:Key="B.Muted2" Color="{StaticResource C.Muted2}"/>
+      <SolidColorBrush x:Key="B.Green" Color="{StaticResource C.Green}"/>
+      <SolidColorBrush x:Key="B.Off" Color="{StaticResource C.Off}"/>
+      <SolidColorBrush x:Key="B.Amber" Color="{StaticResource C.Amber}"/>
+
+      <!-- translucent surfaces -->
+      <SolidColorBrush x:Key="B.Chip" Color="#BF020808"/>
+      <SolidColorBrush x:Key="B.Card" Color="#D1020808"/>
+      <SolidColorBrush x:Key="B.Bar" Color="#EB020808"/>
+      <SolidColorBrush x:Key="B.RedWash" Color="#219a1400"/>
+      <SolidColorBrush x:Key="B.TealWash" Color="#2E294e44"/>
+      <SolidColorBrush x:Key="B.TealWashHover" Color="#4D294e44"/>
+      <SolidColorBrush x:Key="B.RowHover" Color="#29294e44"/>
+      <LinearGradientBrush x:Key="B.Panel" StartPoint="0%,0%" EndPoint="20%,100%">
+        <GradientStop Offset="0" Color="#F0061412"/>
+        <GradientStop Offset="1" Color="#F7030B0A"/>
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="B.Thumb" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Offset="0" Color="#1b3730"/>
+        <GradientStop Offset="1" Color="#091918"/>
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="B.HeaderLine" StartPoint="0%,0%" EndPoint="100%,0%">
+        <GradientStop Offset="0" Color="#294e44"/>
+        <GradientStop Offset="1" Color="#00294e44"/>
+      </LinearGradientBrush>
+
+      <FontFamily x:Key="FontDisplay">avares://DIE-Reanimated-Launcher/Assets/Fonts#Oswald</FontFamily>
+      <FontFamily x:Key="FontLabel">avares://DIE-Reanimated-Launcher/Assets/Fonts#Barlow Semi Condensed</FontFamily>
+      <FontFamily x:Key="FontBody">avares://DIE-Reanimated-Launcher/Assets/Fonts#Source Sans 3</FontFamily>
+
+      <!-- a button with no chrome of its own: every button style below paints Root itself -->
+      <ControlTheme x:Key="Flat" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="{StaticResource B.Bone2}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Border Name="Root" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+                    CornerRadius="0">
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+          </ControlTemplate>
+        </Setter>
+        <Style Selector="^:disabled">
+          <Setter Property="Opacity" Value="0.55"/>
+          <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+      </ControlTheme>
+    </ResourceDictionary>
+  </Styles.Resources>
+
+  <Style Selector="Button">
+    <Setter Property="Theme" Value="{StaticResource Flat}"/>
+  </Style>
+  <!-- text colour is inherited from the window (and from a button's Foreground for its label) -->
+  <Style Selector="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource FontBody}"/>
+  </Style>
+  <Style Selector="ScrollViewer">
+    <Setter Property="AllowAutoHide" Value="True"/>
+  </Style>
+
+  <!-- ── type ─────────────────────────────────────────────────────────────────────────────────────── -->
+
+  <!-- small caps label rows: "PATCH NOTES · 14 SEP" -->
+  <Style Selector="TextBlock.kicker">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="10"/>
+    <Setter Property="LetterSpacing" Value="1.8"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Teal}"/>
+  </Style>
+  <Style Selector="TextBlock.kicker.red"><Setter Property="Foreground" Value="{StaticResource B.Red}"/></Style>
+  <Style Selector="TextBlock.kicker.muted"><Setter Property="Foreground" Value="{StaticResource B.Muted}"/></Style>
+  <Style Selector="TextBlock.kicker.amber"><Setter Property="Foreground" Value="{StaticResource B.Amber}"/></Style>
+  <Style Selector="TextBlock.kicker.bone"><Setter Property="Foreground" Value="{StaticResource B.Bone}"/></Style>
+  <Style Selector="TextBlock.kicker.green"><Setter Property="Foreground" Value="{StaticResource B.Green}"/></Style>
+
+  <!-- tiny card labels: "PLAYERS" -->
+  <Style Selector="TextBlock.label">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="9"/>
+    <Setter Property="LetterSpacing" Value="1.6"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Teal}"/>
+  </Style>
+
+  <!-- status-bar / footer text -->
+  <Style Selector="TextBlock.fine">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontSize" Value="10"/>
+    <Setter Property="LetterSpacing" Value="0.8"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Muted}"/>
+  </Style>
+  <Style Selector="TextBlock.fine.dim"><Setter Property="Foreground" Value="{StaticResource B.Muted2}"/></Style>
+
+  <!-- the three ticks under PLAY -->
+  <Style Selector="TextBlock.tick">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontSize" Value="10"/>
+    <Setter Property="LetterSpacing" Value="1"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone2}"/>
+  </Style>
+
+  <Style Selector="TextBlock.h1">
+    <Setter Property="FontFamily" Value="{StaticResource FontDisplay}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="34"/>
+    <Setter Property="LineHeight" Value="35"/>
+    <Setter Property="LetterSpacing" Value="0.7"/>
+    <Setter Property="TextWrapping" Value="Wrap"/>
+  </Style>
+  <Style Selector="TextBlock.h2">
+    <Setter Property="FontFamily" Value="{StaticResource FontDisplay}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="26"/>
+    <Setter Property="LineHeight" Value="27"/>
+    <Setter Property="LetterSpacing" Value="0.5"/>
+    <Setter Property="TextWrapping" Value="Wrap"/>
+  </Style>
+  <Style Selector="TextBlock.h3">
+    <Setter Property="FontFamily" Value="{StaticResource FontDisplay}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="LetterSpacing" Value="0.8"/>
+  </Style>
+  <Style Selector="TextBlock.body">
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="LineHeight" Value="20"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone2}"/>
+    <Setter Property="TextWrapping" Value="Wrap"/>
+  </Style>
+  <Style Selector="TextBlock.reading">
+    <Setter Property="FontSize" Value="13.5"/>
+    <Setter Property="LineHeight" Value="20"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Body}"/>
+    <Setter Property="TextWrapping" Value="Wrap"/>
+  </Style>
+  <Style Selector="TextBlock.big">
+    <Setter Property="FontSize" Value="22"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+  </Style>
+  <Style Selector="TextBlock.kv">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone2}"/>
+  </Style>
+  <Style Selector="TextBlock.mono">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontSize" Value="11"/>
+    <Setter Property="LetterSpacing" Value="0.4"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Muted}"/>
+  </Style>
+
+  <!-- ── surfaces ─────────────────────────────────────────────────────────────────────────────────── -->
+
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="{StaticResource B.Panel}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BoxShadow" Value="0 2 18 0 #73000000"/>
+  </Style>
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{StaticResource B.Panel}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/>
+    <Setter Property="BorderThickness" Value="1,2,1,1"/>
+    <Setter Property="Padding" Value="12,10,14,10"/>
+  </Style>
+  <Style Selector="Border.card.up"><Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/></Style>
+  <Style Selector="Border.thumb">
+    <Setter Property="Background" Value="{StaticResource B.Thumb}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+  </Style>
+  <Style Selector="Border.hairline">
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line1}"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+  </Style>
+  <!-- status dots: green = good; .off red; .warn amber; .idle teal-grey -->
+  <Style Selector="Border.dot">
+    <Setter Property="Width" Value="7"/>
+    <Setter Property="Height" Value="7"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Background" Value="{StaticResource B.Green}"/>
+    <Setter Property="BoxShadow" Value="0 0 6 0 #54a438"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+  </Style>
+  <Style Selector="Border.dot.off">
+    <Setter Property="Background" Value="{StaticResource B.Off}"/>
+    <Setter Property="BoxShadow" Value="0 0 5 0 #be2020"/>
+  </Style>
+  <Style Selector="Border.dot.warn">
+    <Setter Property="Background" Value="{StaticResource B.Amber}"/>
+    <Setter Property="BoxShadow" Value="0 0 5 0 #c47e00"/>
+  </Style>
+  <Style Selector="Border.dot.idle">
+    <Setter Property="Background" Value="{StaticResource B.Line3}"/>
+    <Setter Property="BoxShadow" Value="0 0 0 0 #00000000"/>
+  </Style>
+
+  <!-- ── buttons ──────────────────────────────────────────────────────────────────────────────────── -->
+
+  <!-- header tabs -->
+  <Style Selector="Button.tab">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone2}"/>
+    <Setter Property="Padding" Value="0,6,0,5"/>
+    <Setter Property="BorderThickness" Value="0,0,0,2"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+  </Style>
+  <Style Selector="Button.tab:pointerover"><Setter Property="Foreground" Value="{StaticResource B.Bone}"/></Style>
+  <Style Selector="Button.tab.on">
+    <Setter Property="Foreground" Value="{StaticResource B.Bone}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Red}"/>
+  </Style>
+  <Style Selector="Button.tab TextBlock">
+    <Setter Property="LetterSpacing" Value="2.3"/>
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+  </Style>
+
+  <!-- the primary action -->
+  <Style Selector="Button.play">
+    <Setter Property="Background" Value="{StaticResource B.RedDeep}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Red}"/>
+    <Setter Property="Foreground" Value="{StaticResource B.BoneBright}"/>
+    <Setter Property="Width" Value="260"/>
+    <Setter Property="Height" Value="70"/>
+    <Setter Property="FontFamily" Value="{StaticResource FontDisplay}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="30"/>
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.14"/>
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.play /template/ Border#Root">
+    <Setter Property="BoxShadow" Value="0 0 30 0 #59c41800"/>
+  </Style>
+  <Style Selector="Button.play:pointerover">
+    <Setter Property="Background" Value="{StaticResource B.Red}"/>
+  </Style>
+  <Style Selector="Button.play:pointerover /template/ Border#Root">
+    <Setter Property="BoxShadow" Value="0 0 40 0 #8Cc41800"/>
+  </Style>
+  <Style Selector="Button.play:disabled">
+    <Setter Property="Opacity" Value="1"/>
+    <Setter Property="Background" Value="{StaticResource B.RedWash}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.RedDeep}"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone2}"/>
+  </Style>
+  <Style Selector="Button.play:disabled /template/ Border#Root">
+    <Setter Property="BoxShadow" Value="0 0 0 0 #00000000"/>
+  </Style>
+  <Style Selector="Button.play TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource FontDisplay}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="30"/>
+    <Setter Property="LetterSpacing" Value="6.6"/>
+    <Setter Property="Margin" Value="6,0,0,0"/>
+  </Style>
+
+  <!-- secondary: teal outline -->
+  <Style Selector="Button.ghost">
+    <Setter Property="Background" Value="{StaticResource B.TealWash}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Teal}"/>
+    <Setter Property="Padding" Value="18,7"/>
+  </Style>
+  <Style Selector="Button.ghost:pointerover">
+    <Setter Property="Background" Value="{StaticResource B.TealWashHover}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line3}"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone}"/>
+  </Style>
+  <Style Selector="Button.ghost TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="LetterSpacing" Value="1.4"/>
+  </Style>
+  <Style Selector="Button.ghost.small">
+    <Setter Property="Padding" Value="14,5"/>
+  </Style>
+  <Style Selector="Button.ghost.small TextBlock">
+    <Setter Property="FontSize" Value="10"/>
+  </Style>
+
+  <!-- text link -->
+  <Style Selector="Button.link">
+    <Setter Property="Foreground" Value="{StaticResource B.Teal}"/>
+    <Setter Property="Padding" Value="4,7"/>
+  </Style>
+  <Style Selector="Button.link:pointerover"><Setter Property="Foreground" Value="{StaticResource B.Bone}"/></Style>
+  <Style Selector="Button.link TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="LetterSpacing" Value="1.4"/>
+  </Style>
+  <Style Selector="Button.link.fine TextBlock">
+    <Setter Property="FontSize" Value="10"/>
+    <Setter Property="LetterSpacing" Value="1.2"/>
+  </Style>
+
+  <!-- settings pills (display mode) -->
+  <Style Selector="Button.pill">
+    <Setter Property="Background" Value="{StaticResource B.TealWash}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone2}"/>
+    <Setter Property="Padding" Value="12,4"/>
+  </Style>
+  <Style Selector="Button.pill:pointerover">
+    <Setter Property="Foreground" Value="{StaticResource B.Bone}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line3}"/>
+  </Style>
+  <Style Selector="Button.pill.on">
+    <Setter Property="Background" Value="{StaticResource B.RedWash}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.RedDeep}"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Bone}"/>
+  </Style>
+  <Style Selector="Button.pill TextBlock.check">
+    <Setter Property="IsVisible" Value="False"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Red}"/>
+    <Setter Property="Margin" Value="0,0,5,0"/>
+  </Style>
+  <Style Selector="Button.pill.on TextBlock.check"><Setter Property="IsVisible" Value="True"/></Style>
+  <Style Selector="Button.pill TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource FontLabel}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="10"/>
+    <Setter Property="LetterSpacing" Value="0.7"/>
+  </Style>
+
+  <!-- window controls -->
+  <Style Selector="Button.win">
+    <Setter Property="Width" Value="26"/>
+    <Setter Property="Height" Value="24"/>
+    <Setter Property="Background" Value="#99020808"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line1}"/>
+    <Setter Property="Foreground" Value="{StaticResource B.Muted}"/>
+    <Setter Property="FontSize" Value="12"/>
+  </Style>
+  <Style Selector="Button.win:pointerover">
+    <Setter Property="Foreground" Value="{StaticResource B.Bone}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/>
+  </Style>
+  <Style Selector="Button.win.close:pointerover">
+    <Setter Property="Background" Value="{StaticResource B.RedDeep}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Red}"/>
+  </Style>
+
+  <!-- list rows (news) and tiles (home) -->
+  <Style Selector="Button.row">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="BorderThickness" Value="3,0,0,1"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line1}"/>
+    <Setter Property="Padding" Value="10"/>
+  </Style>
+  <Style Selector="Button.row:pointerover"><Setter Property="Background" Value="{StaticResource B.RowHover}"/></Style>
+  <Style Selector="Button.row.on">
+    <Setter Property="Background" Value="#1A9a1400"/>
+  </Style>
+  <Style Selector="Button.row.on /template/ Border#Root">
+    <Setter Property="BorderBrush" Value="{StaticResource B.Red}"/>
+  </Style>
+  <Style Selector="Button.tile">
+    <Setter Property="Width" Value="178"/>
+    <Setter Property="Background" Value="{StaticResource B.Card}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource B.Line2}"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+  </Style>
+  <Style Selector="Button.tile:pointerover"><Setter Property="BorderBrush" Value="{StaticResource B.Line3}"/></Style>
+
+</Styles>

@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DieReanimated.Launcher.Ui.ViewModels"
+             xmlns:v="using:DieReanimated.Launcher.Ui.Views"
+             x:Class="DieReanimated.Launcher.Ui.Views.SettingsView"
+             x:DataType="vm:LauncherViewModel">
+  <!-- Settings: only what a player can actually change. Caching, servers and updates are not settings. -->
+  <StackPanel>
+
+    <Grid ColumnDefinitions="*,14,*">
+
+      <!-- game -->
+      <Border Classes="panel" Padding="14,10,14,14">
+        <StackPanel Spacing="14">
+          <v:SectionTitle Text="GAME" Margin="0"/>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="INSTALL FOLDER" Classes="label"/>
+            <TextBlock Text="{Binding InstallDir}" Classes="mono" FontSize="12" Foreground="{StaticResource B.Bone}" TextTrimming="CharacterEllipsis"/>
+            <TextBlock Text="{Binding InstallDetail}" Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}" TextWrapping="Wrap"/>
+          </StackPanel>
+
+          <StackPanel Spacing="6">
+            <TextBlock Text="DISPLAY MODE" Classes="label"/>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Button Classes="pill" Classes.on="{Binding IsBorderless}" Click="OnBorderless"><StackPanel Orientation="Horizontal"><TextBlock Classes="check" Text="✓"/><TextBlock Text="BORDERLESS"/></StackPanel></Button>
+              <Button Classes="pill" Classes.on="{Binding IsFullscreen}" Click="OnFullscreen"><StackPanel Orientation="Horizontal"><TextBlock Classes="check" Text="✓"/><TextBlock Text="FULLSCREEN"/></StackPanel></Button>
+              <Button Classes="pill" Classes.on="{Binding IsWindowed}" Click="OnWindowed"><StackPanel Orientation="Horizontal"><TextBlock Classes="check" Text="✓"/><TextBlock Text="WINDOWED"/></StackPanel></Button>
+            </StackPanel>
+            <TextBlock Text="the same setting as the game's options menu" Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- client patch -->
+      <Border Grid.Column="2" Classes="panel" Padding="14,10,14,14">
+        <StackPanel Spacing="14">
+          <v:SectionTitle Text="CLIENT PATCH" Margin="0"/>
+
+          <StackPanel Spacing="4">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <Border Classes="dot" Classes.off="{Binding !PatchOk}"/>
+              <TextBlock Text="{Binding PatchLine}" FontSize="13" FontWeight="SemiBold"/>
+            </StackPanel>
+            <TextBlock Text="{Binding PatchDetail}" Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}" TextWrapping="Wrap"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="ghost small" Click="OnReapply" IsEnabled="{Binding CanReapply}"><TextBlock Text="RE-APPLY"/></Button>
+            <Button Classes="ghost small" Click="OnRestore" IsEnabled="{Binding CanRestore}"><TextBlock Text="RESTORE ORIGINAL"/></Button>
+          </StackPanel>
+
+          <TextBlock Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}" TextWrapping="Wrap"
+                     Text="The patch makes the game sign in with a Steam session ticket. Restore puts the untouched original back; the launcher asks to patch again on its next start."/>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- footer line -->
+    <Grid ColumnDefinitions="*,Auto" Margin="0,12,0,0">
+      <TextBlock Classes="fine" VerticalAlignment="Center">
+        <Run Text="LAUNCHER "/><Run Text="{Binding VersionText}"/>
+      </TextBlock>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+        <Button Classes="link fine" Padding="0" Click="OnOpenLog"><TextBlock Text="OPEN LOG"/></Button>
+        <Button Classes="link fine" Padding="0" Click="OnDiscord" IsVisible="{Binding HasDiscord}"><TextBlock Text="DISCORD"/></Button>
+        <Button Classes="link fine" Padding="0" Click="OnSource"><TextBlock Text="LAUNCHER GITHUB"/></Button>
+      </StackPanel>
+    </Grid>
+  </StackPanel>
+</UserControl>

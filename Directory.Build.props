@@ -1,0 +1,6 @@
+<Project>
+  <!-- The development version. A release build overrides it from the tag (-p:Version=X.Y.Z, see .github/workflows). -->
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Launcher/Launcher.csproj" />
+    <Project Path="src/Launcher.Cli/Launcher.Cli.csproj" />
+    <Project Path="src/Launcher.Core/Launcher.Core.csproj" />
+    <Project Path="src/Launcher.Patching/Launcher.Patching.csproj" />
+  </Folder>
+  <Folder Name="/patches/">
+    <Project Path="patches/DieAuth/DieAuth.csproj" />
+    <Project Path="patches/DieGamepad/DieGamepad.csproj" />
+    <Project Path="patches/UnityEngine.Stub/UnityEngine.Stub.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Launcher.Tests/Launcher.Tests.csproj" />
+  </Folder>
+</Solution>

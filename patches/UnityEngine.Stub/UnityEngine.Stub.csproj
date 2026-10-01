@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    A COMPILE-ONLY facade for UnityEngine.
+
+    DieGamepad runs inside the game and therefore needs UnityEngine types — MonoBehaviour, Vector2,
+    Input, Camera — at compile time. CI has no game install, and Unity's own UnityEngine.dll cannot be
+    redistributed in a public repository. So this project declares just enough of that API, in our own
+    words, for the payload to compile against. It is referenced with Private=false and is never shipped:
+    at run time the game's real UnityEngine.dll answers every one of these members.
+
+    Three things make the substitution safe, and all three are verified against the real assembly rather
+    than assumed:
+
+      1. IDENTITY. The reference the compiler records must match what Mono will bind to, so this builds as
+         `UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null` — exactly the retail
+         assembly's name. AssemblyVersion is pinned below so the release workflow's `-p:Version=` (which
+         stamps every other project) cannot change it.
+
+      2. MEMBER KIND. A property stubbed as a field emits `ldsfld` and fails at run time. Every member here
+         was checked against the real assembly: `Camera.main`, `Screen.width`, `Transform.position`,
+         `Vector2.zero` and friends are PROPERTIES; `Vector2.x/y`, `Vector3.x/y/z` and `Mathf.Rad2Deg` are
+         FIELDS.
+
+      3. LAYOUT AND VALUES. Vector2/Vector3 are structs whose fields must line up with Unity's, and KeyCode
+         is generated from the retail enum (KeyCode.g.cs) because the payload does arithmetic on it —
+         `(int)KeyCode.JoystickButton0 + i` is 330 + i on this build, and a wrong constant would silently
+         bind the wrong button.
+
+    Adding a Unity API to the payload means adding it here too; a missing member is a compile error, which
+    is the failure mode we want rather than a run-time surprise.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>UnityEngine</AssemblyName>
+    <RootNamespace>UnityEngine</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Deterministic>true</Deterministic>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+
+    <!-- Pinned: this must stay the retail assembly's identity whatever version CI stamps on a release. -->
+    <Version>0.0.0.0</Version>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0.0</FileVersion>
+    <SignAssembly>false</SignAssembly>
+
+    <!-- Never packed, never published, never shipped. -->
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- The stubs are deliberately bodiless; that is the point, not an oversight. -->
+    <NoWarn>$(NoWarn);CS0649;CS0169;CS1591</NoWarn>
+  </PropertyGroup>
+
+</Project>
