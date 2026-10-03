@@ -63,7 +63,7 @@ re-fetches the status every 15 s while it is open; no other screen polls.
 | Setting | Effect |
 |---|---|
 | Install folder | read-only: where the launcher is, and that the game is there |
-| Display mode: Borderless · Fullscreen · Windowed | writes the game's own `Options_CribDisplayMode` value ([files](files-and-locations.md)); applies on the next PLAY |
+| Display mode: Borderless · Windowed | writes the game's own `Options_CribDisplayMode` value ([files](files-and-locations.md)); applies on the next PLAY. No Fullscreen: the Crib forces itself windowed every frame once the hub loads, so a fullscreen start ends as an oversized window that crashes on alt-tab — the game's own menu offers only these two |
 | Client patch: status line, `RE-APPLY`, `RESTORE ORIGINAL` | `Applied · up to date` / `Applied · update available` / `Not applied` / `Incomplete`; Re-apply runs PATCH again; Restore puts the `.bak` back. Both are disabled while the game runs |
 | footer | the launcher version, `OPEN LOG` (the log file in the default editor), `DISCORD` (when set), `LAUNCHER GITHUB` (this repository) |
 

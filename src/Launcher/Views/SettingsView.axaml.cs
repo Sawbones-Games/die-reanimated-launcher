@@ -10,7 +10,6 @@ public sealed partial class SettingsView : UserControl
     private LauncherViewModel? Vm => DataContext as LauncherViewModel;
 
     private void OnBorderless(object? sender, RoutedEventArgs e) => Vm?.SetWindowMode(GameProcess.WindowMode.Borderless);
-    private void OnFullscreen(object? sender, RoutedEventArgs e) => Vm?.SetWindowMode(GameProcess.WindowMode.Fullscreen);
     private void OnWindowed(object? sender, RoutedEventArgs e) => Vm?.SetWindowMode(GameProcess.WindowMode.Windowed);
     private async void OnReapply(object? sender, RoutedEventArgs e) { if (Vm != null) await Vm.ReapplyAsync(); }
     private async void OnRestore(object? sender, RoutedEventArgs e) { if (Vm != null) await Vm.RestoreAsync(); }

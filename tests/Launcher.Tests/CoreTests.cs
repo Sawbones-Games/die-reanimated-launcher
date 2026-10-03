@@ -12,8 +12,8 @@ public sealed class LaunchArgumentsTests
     [InlineData(null, false, 1920, 1080, "-popupwindow -screen-width 1920 -screen-height 1080")]   // fresh install: default borderless, no saved resolution
     [InlineData(1, true, 1920, 1080, "-popupwindow")]                                                // borderless, resolution saved
     [InlineData(0, true, 1920, 1080, "")]                                                            // windowed
-    [InlineData(2, true, 2560, 1440, "")]                                                            // fullscreen
-    [InlineData(2, false, 2560, 1440, "-screen-width 2560 -screen-height 1440")]
+    [InlineData(2, true, 2560, 1440, "-popupwindow")]                                                // fullscreen (old launcher builds): the Crib can't run it → borderless
+    [InlineData(2, false, 2560, 1440, "-popupwindow -screen-width 2560 -screen-height 1440")]
     public void MatchesTheRetailStub(int? mode, bool saved, int w, int h, string expected) =>
         Assert.Equal(expected, GameProcess.BuildArguments(mode, saved, w, h));
 

@@ -12,7 +12,7 @@ namespace DieReanimated.Launcher;
 /// <item>Refuse to start on a primary screen narrower than 1024 px.</item>
 /// <item>Read <c>HKCU\Software\Deep Silver\Dead Island: Epidemic</c>: a value starting with
 ///   <c>Options_CribDisplayMode</c> equal to 1 (borderless; also the game's default when unset) adds
-///   <c>-popupwindow</c>; if no value starting with <c>Screenmanager</c> exists (the game never saved a
+///   <c>-popupwindow</c> — and so does 2 (fullscreen), which the Crib cannot run (see <see cref="WindowMode"/>); if no value starting with <c>Screenmanager</c> exists (the game never saved a
 ///   resolution) add <c>-screen-width W -screen-height H</c> of the primary screen.</item>
 /// <item>Append our own command-line arguments, then start <c>Dead Island Epidemic - Crib.exe</c> from the
 ///   game folder, so Steam's environment (set on us by the Play button) is inherited and the overlay attaches.</item>
@@ -22,16 +22,26 @@ public static class GameProcess
 {
     public const string RegistryKey = @"Software\Deep Silver\Dead Island: Epidemic";
 
-    /// <summary>The game's <c>PCSettings.WindowMode</c>: 0 windowed, 1 borderless (default), 2 fullscreen.</summary>
-    public enum WindowMode { Windowed = 0, Borderless = 1, Fullscreen = 2 }
+    /// <summary>The Crib display modes the game's own options menu offers: 0 windowed, 1 borderless (default).
+    /// <c>PCSettings.WindowMode</c> also has 2 = fullscreen, but the Crib cannot run fullscreen —
+    /// <c>CribMain.Update()</c> forces <c>Screen.fullScreen = false</c> every frame, so a fullscreen start drops
+    /// to a screen-sized window with its title bar off-screen once the hub loads, and the next alt-tab crashes
+    /// the D3D reset. Older launcher builds could write 2; it is launched as borderless (see
+    /// <see cref="Normalize"/>).</summary>
+    public enum WindowMode { Windowed = 0, Borderless = 1 }
 
     public sealed record LaunchPlan(string Arguments, WindowMode Mode, bool ResolutionSaved, int ScreenWidth, int ScreenHeight);
+
+    /// <summary>Anything but an explicit windowed (0) is borderless — unset (the game's default) and the
+    /// unsupported fullscreen value 2 alike.</summary>
+    public static WindowMode Normalize(int? cribDisplayMode) =>
+        cribDisplayMode == (int)WindowMode.Windowed ? WindowMode.Windowed : WindowMode.Borderless;
 
     /// <summary>Pure: what the retail stub would pass, given the registry facts and screen size.</summary>
     public static string BuildArguments(int? cribDisplayMode, bool screenmanagerSaved, int width, int height, IEnumerable<string>? extra = null)
     {
         var args = new List<string>();
-        if (cribDisplayMode is null || cribDisplayMode == (int)WindowMode.Borderless) args.Add("-popupwindow");
+        if (Normalize(cribDisplayMode) == WindowMode.Borderless) args.Add("-popupwindow");
         if (!screenmanagerSaved) { args.Add("-screen-width"); args.Add(width.ToString()); args.Add("-screen-height"); args.Add(height.ToString()); }
         if (extra != null) args.AddRange(extra);
         return string.Join(' ', args);
@@ -41,7 +51,7 @@ public static class GameProcess
     {
         (int? mode, bool saved) = ReadRegistry();
         (int w, int h) = PrimaryScreen();
-        return new LaunchPlan(BuildArguments(mode, saved, w, h, extra), (WindowMode)(mode ?? 1), saved, w, h);
+        return new LaunchPlan(BuildArguments(mode, saved, w, h, extra), Normalize(mode), saved, w, h);
     }
 
     public static bool IsCribRunning() =>

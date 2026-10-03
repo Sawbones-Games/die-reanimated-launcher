@@ -41,7 +41,7 @@ the two below.
 
 | Value | Access | Purpose |
 |---|---|---|
-| `Options_CribDisplayMode*` | read on PLAY; written by Settings → Display mode | the game's own window mode: `0` windowed, `1` borderless (the game's default), `2` fullscreen. `1` or absent → the game is started with `-popupwindow`, exactly as the retail launcher did |
+| `Options_CribDisplayMode*` | read on PLAY; written by Settings → Display mode | the game's own window mode: `0` windowed, `1` borderless (the game's default), `2` fullscreen (never offered for the Crib by the game's menu, and unsupported — the Crib forces windowed once the hub loads). `1`, `2` or absent → the game is started with `-popupwindow`; the retail stub passed it for `1`/absent only, `2` is folded in so a value written by an older launcher build can't strand the window |
 | `Screenmanager*` | read on PLAY | present once the game has saved a resolution; absent → the launcher passes the primary screen's size, as the retail launcher did |
 
 And read-only, for display and hints: `HKCU\Software\Valve\Steam\SteamPath`, then Steam's own

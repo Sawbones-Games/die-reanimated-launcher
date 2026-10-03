@@ -24,7 +24,6 @@
             <TextBlock Text="DISPLAY MODE" Classes="label"/>
             <StackPanel Orientation="Horizontal" Spacing="6">
               <Button Classes="pill" Classes.on="{Binding IsBorderless}" Click="OnBorderless"><StackPanel Orientation="Horizontal"><TextBlock Classes="check" Text="✓"/><TextBlock Text="BORDERLESS"/></StackPanel></Button>
-              <Button Classes="pill" Classes.on="{Binding IsFullscreen}" Click="OnFullscreen"><StackPanel Orientation="Horizontal"><TextBlock Classes="check" Text="✓"/><TextBlock Text="FULLSCREEN"/></StackPanel></Button>
               <Button Classes="pill" Classes.on="{Binding IsWindowed}" Click="OnWindowed"><StackPanel Orientation="Horizontal"><TextBlock Classes="check" Text="✓"/><TextBlock Text="WINDOWED"/></StackPanel></Button>
             </StackPanel>
             <TextBlock Text="the same setting as the game's options menu" Classes="kv" FontSize="11" Foreground="{StaticResource B.Muted}"/>

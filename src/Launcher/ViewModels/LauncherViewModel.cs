@@ -467,10 +467,9 @@ public sealed class LauncherViewModel : ObservableObject
     public GameProcess.WindowMode WindowMode
     {
         get => _windowMode;
-        private set { if (Set(ref _windowMode, value)) { Raise(nameof(IsBorderless)); Raise(nameof(IsFullscreen)); Raise(nameof(IsWindowed)); } }
+        private set { if (Set(ref _windowMode, value)) { Raise(nameof(IsBorderless)); Raise(nameof(IsWindowed)); } }
     }
     public bool IsBorderless => _windowMode == GameProcess.WindowMode.Borderless;
-    public bool IsFullscreen => _windowMode == GameProcess.WindowMode.Fullscreen;
     public bool IsWindowed => _windowMode == GameProcess.WindowMode.Windowed;
     private void ReadWindowMode() { try { WindowMode = GameProcess.Plan().Mode; } catch { } }
     public void SetWindowMode(GameProcess.WindowMode mode)
