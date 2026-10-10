@@ -64,6 +64,11 @@ public static class ClientPatcher
         if (!GamepadPatcher.IsInstalled(gameDir, out string gamepadDetail))
             return new PatchStatus(PatchState.NotPatched, PayloadVersion(payloadPath), backup, gamepadDetail);
 
+        // The game fixes ride along. A fix that does not recognise the build is NotApplicable and never holds
+        // the patch back — only one that could go in and has not makes PATCH due.
+        if (EscapeCountdownPatcher.Inspect(gameDir, out string fixDetail) == FixState.NotApplied)
+            return new PatchStatus(PatchState.NotPatched, PayloadVersion(payloadPath), backup, fixDetail);
+
         return new PatchStatus(PatchState.Patched, PayloadVersion(payloadPath), backup, "hook present");
     }
 
@@ -125,6 +130,9 @@ public static class ClientPatcher
         // .bak of the Crib assembly.
         if (gamepadPayloadSource != null) GamepadPatcher.Apply(gameDir, gamepadPayloadSource, log);
 
+        // Fixes to the game itself — no payload, an edit to the match client's own code.
+        EscapeCountdownPatcher.Apply(gameDir, log);
+
         return Inspect(gameDir, spec);
     }
 
@@ -142,7 +150,8 @@ public static class ClientPatcher
         string payloadPath = Path.Combine(managed, spec.PayloadFile);
         if (File.Exists(payloadPath)) { File.Delete(payloadPath); log("removed " + payloadPath); }
 
-        // …and the gamepad half, including the match client, which the identity patch never touches.
+        // …and the gamepad half, including the match client, which the identity patch never touches. Its .bak
+        // restore also takes out the escape countdown fix, which edits the same match-client assembly.
         GamepadPatcher.Restore(gameDir, log);
     }
 

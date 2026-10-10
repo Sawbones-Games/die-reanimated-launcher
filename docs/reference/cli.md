@@ -18,7 +18,7 @@ die-launcher <command> [--game <install folder>] [--server <url>] [game argument
 | Command | Does | Network | Exit code |
 |---|---|---|---|
 | `state` | Fetches the manifest, inspects the install, prints what the launcher would do now | manifest (304 when unchanged) | `0` play · `10` patch · `20` update · `30` not in a game folder · `40` in game · `50` maintenance |
-| `patch` | Installs the client patch — both halves: the identity hook + `DieAuth.dll` in the Crib, and the gamepad start-up hook + `DieGamepad.dll` in both clients — and writes `ip.cfg` | manifest; a release download only if the manifest names a payload version other than the embedded one | `0` patched · `1` not · `3` the game is running |
+| `patch` | Installs the client patch — both halves: the identity hook + `DieAuth.dll` in the Crib, and the gamepad start-up hook + `DieGamepad.dll` in both clients — plus the [game fixes](client-patch.md#game-fixes), and writes `ip.cfg` | manifest; a release download only if the manifest names a payload version other than the embedded one | `0` patched · `1` not · `3` the game is running |
 | `play` | Writes `ip.cfg` from the manifest and starts the game with the retail launcher's arguments | manifest | `0` started · `50` the server is in maintenance (nothing started) |
 | `update` | Brings the launcher and/or the client patch to the versions the manifest names | release download(s) | `0`; prints "updated launcher started" when it replaced itself |
 | `status` | Inspects the client patch only | none | `0` patched · `1` not |
@@ -45,8 +45,8 @@ One line: `<State>  payload=<version|->  backup=<yes|no>  (<detail>)`.
 
 | State | Meaning |
 |---|---|
-| `NotPatched` | at least one half is not installed — the getter is the game's original, or a client is missing its gamepad hook or payload. The detail says which |
-| `Patched` | both halves are in place: the getter calls its payload, and both clients carry the gamepad hook and `DieGamepad.dll` |
+| `NotPatched` | at least one half is not installed — the getter is the game's original, or a client is missing its gamepad hook or payload — or a game fix that applies to this build is missing. The detail says which |
+| `Patched` | both halves are in place: the getter calls its payload, and both clients carry the gamepad hook and `DieGamepad.dll`; every game fix is applied, or does not apply to this build |
 | `PatchedPayloadMissing` | the getter calls the payload but `DieAuth.dll` is gone — the game would fail to resolve it; `patch` repairs it |
 | `AssemblyMissing` | the Crib's `Assembly-CSharp.dll` was not found — this is not the install it was pointed at. A match client missing its assembly reports `NotPatched` instead, so a partial install is completed rather than refused |
 

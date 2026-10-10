@@ -25,7 +25,7 @@ reference/
   screens.md                the window: options, the frame, Home / News / Servers / Settings
   cli.md                    die-launcher state | patch | play | update | status | restore
   manifest.md               the server manifest + status: the contract the launcher speaks
-  client-patch.md           the patch's two halves: the shapes of edit, detection, the payload contracts
+  client-patch.md           the patch's two halves + the game fixes: the shapes of edit, detection, the payload contracts
   gamepad-patch.md          the gamepad half: what is installed in both clients, the payload, its frame budget
   files-and-locations.md    every file the launcher reads or writes
   dieauth-log.md            the payload's log lines
