@@ -51,6 +51,30 @@ public sealed class GameInstall
     public static bool IsSteamRunning() =>
         System.Diagnostics.Process.GetProcessesByName("steam").Length > 0;
 
+    /// <summary>The Steam folder that holds <c>config\loginusers.vdf</c>. On Windows that is the registry's
+    /// <c>SteamPath</c>. Under Wine/Proton that path is a stub (an empty <c>config</c> folder) and the real Steam
+    /// is on the host, so fall back to where Steam says it lives (<c>STEAM_COMPAT_CLIENT_INSTALL_PATH</c>, set for
+    /// every game it starts) and the usual Linux locations, reached through Wine's <c>Z:</c> drive.</summary>
+    private static string? WithLoginUsers(string? registryPath)
+    {
+        static bool Has(string? dir) => dir is not null && File.Exists(Path.Combine(dir, "config", "loginusers.vdf"));
+        if (Has(registryPath)) return registryPath;
+        var candidates = new List<string>();
+        if (Environment.GetEnvironmentVariable("STEAM_COMPAT_CLIENT_INSTALL_PATH") is { Length: > 0 } installed) candidates.Add(installed);
+        if (Environment.GetEnvironmentVariable("HOME") is { Length: > 0 } home)
+        {
+            candidates.Add(home + "/.local/share/Steam");
+            candidates.Add(home + "/.steam/steam");
+        }
+        foreach (string c in candidates)
+        {
+            // a host path as Wine sees it: /home/x/... is Z:\home\x\...
+            string win = c.StartsWith('/') ? "Z:" + c.Replace('/', '\\') : c;
+            if (Has(win)) return win;
+        }
+        return registryPath;
+    }
+
     /// <summary>The player's Steam persona and avatar — read from Steam's local files. The account is the one
     /// Steam is signed in as (<c>ActiveProcess\ActiveUser</c>); with Steam closed, the most recent login.</summary>
     public static (string? Persona, ulong SteamId, string? AvatarPath) SteamPersona()
@@ -59,7 +83,7 @@ public sealed class GameInstall
         {
             if (!OperatingSystem.IsWindows()) return (null, 0, null);
             using var key = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam");
-            string? steam = key?.GetValue("SteamPath") as string;
+            string? steam = WithLoginUsers(key?.GetValue("SteamPath") as string);
             if (steam is null) return (null, 0, null);
 
             // "users" { "7656…" { "AccountName" "" "PersonaName" "" … "MostRecent" "1" / "Timestamp" "…" } … }
@@ -76,7 +100,7 @@ public sealed class GameInstall
                 }
 
             ulong sid = 0;
-            using (var active = key!.OpenSubKey("ActiveProcess"))
+            using (var active = key?.OpenSubKey("ActiveProcess"))
                 if (active?.GetValue("ActiveUser") is int accountId && accountId != 0) sid = 76561197960265728UL + (ulong)accountId;
             if (sid == 0 && users.Count > 0)
                 sid = (users.FirstOrDefault(u => u.MostRecent) is { Sid: not 0 } r ? r : users.MaxBy(u => u.Stamp)).Sid;
